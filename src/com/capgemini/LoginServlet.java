@@ -32,14 +32,21 @@ public class LoginServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//Getting request parameters
-		String user = request.getParameter("user");
+		String user = request.getParameter("username");
 		String password = request.getParameter("password");
-
+		
 		//getting servlet confg init parameters
 		String userID = getServletConfig().getInitParameter("user");
 		String checkPassword = getServletConfig().getInitParameter("password");
-
-		if(userID.equals(user) && checkPassword.equals(password)) {
+		
+		String nameReg = "^[A-Z][A-z\\s]{3,}$";
+		if(!user.matches(nameReg)) {
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+			PrintWriter out = response.getWriter();
+			out.println("<font color = red>UserName should start with capital letter and has minimum 3 characters</font>");
+			rd.include(request, response);
+		}
+		else if(userID.equals(user) && checkPassword.equals(password)) {
 			request.setAttribute("user", user);
 			request.getRequestDispatcher("LoginSuccess.jsp").include(request, response);
 		}
